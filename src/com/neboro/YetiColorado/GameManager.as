@@ -15,6 +15,8 @@ import com.neboro.utilities.chooseElementsFrom;
 import com.neboro.utilities.getElementsOfByIndexingArray;
 import com.neboro.utilities.getRandomElementOf;
 
+import flash.display.AVM1Movie;
+
 import flash.display.Bitmap;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -38,11 +40,11 @@ public class GameManager {
     [Embed("../../../assets/swfs/travelling.swf", mimeType="application/octet-stream")]
     private var TravellingMovie:Class;
 
-    [Embed("../../../assets/yeti_down_part.swf")]
-    private var YetiDownPart:Class;
-
-    [Embed("../../../assets/Yeti_top.swf", mimeType="application/octet-stream")]
+    [Embed("../../../assets/swfs/yetiStatic.swf")]
     private var YetiSWF:Class;
+
+    [Embed("../../../assets/swfs/YetiHeadAnimation.swf")]
+    private var YetiHeadAnimationSWF:Class;
 
     [Embed(source="../../../assets/give.mp3")]
     private var GiveSound:Class;
@@ -311,7 +313,7 @@ public class GameManager {
     [Embed(source="../../../assets/background_sounds/opus_opium_-_Momentums.mp3")]
     private var BackgroundSound5:Class;
 
-    private static const YETI_SIZE_PERCENTAGE:Number = 0.25;
+    private static const YETI_SIZE_PERCENTAGE:Number = 0.5;
 
     private var soundClasses:Array = []
 
@@ -324,8 +326,10 @@ public class GameManager {
     private var stageHeight:int;
     private var stageWidth:int;
 
+    private var yetiStatic:MovieClip;
+    private var yetiHeadAnimation:MovieClip;
     private var yeti:MovieClip;
-    private var yetiDownPart:MovieClip;
+    private var lotkiMiddle:DisplayObject;
 
     private function showFruits():void {
         var randomItems = chooseElementsFrom(bitmaps, fruits.length);
@@ -512,11 +516,51 @@ public class GameManager {
         displayObject.x = (stageWidth - displayObject.width) / 2;
     }
 
+    private function placeYeti(yeti:DisplayObject){
+        var yetiPrevWidth = yeti.width;
+        var width:Number = stageWidth * YETI_SIZE_PERCENTAGE;
+        yeti.width = width;
+        var k:Number = width / yetiPrevWidth;
+        yeti.height *= k;
+        yeti.x = (stageWidth - width) / 2;
+        yeti.y = lotkiMiddle.y - yeti.height + stageHeight * -0.06;
+    }
+
+    private function setActiveYeti(activeYeti:MovieClip):void {
+        if(yeti){
+            var saveYeti = yeti;
+            setTimeout(function(){
+                saveYeti.visible = false;
+            }, 100);
+        }
+
+        yeti = activeYeti;
+
+        yeti.visible = true;
+    }
+
+    private function playYetiAnimation(swfClass, framesCount:int,  completeListener:Function):void {
+        var animYeti:MovieClip = new swfClass;
+        placeYeti(animYeti);
+        parent.addChildAt(animYeti, parent.getChildIndex(lotkiMiddle));
+
+        setActiveYeti(animYeti);
+
+        setTimeout(function(){
+            setActiveYeti(yetiStatic);
+            parent.removeChild(animYeti);
+        }, framesCount * 1.0 / 24.0 * 1000);
+    }
+
+    private function playYetiHeadAnimation(completeListener:Function):void {
+        playYetiAnimation(YetiHeadAnimationSWF, 61, completeListener);
+    }
+
     private function showYetiAndLotki():void {
         var lotki_left:Bitmap = new LotkiLeft;
-        var k:Number = stageWidth / lotki_left.width / 3;
-        var lotkiWidth = stageWidth / 3;
-        lotki_left.width = lotkiWidth;
+        var k:Number = stageWidth / lotki_left.width * 0.375;
+        var rightLotkiWidth = stageWidth * 0.375;
+        lotki_left.width = rightLotkiWidth;
         var lotkiHeight:int = lotki_left.height * k;
         lotki_left.height = lotki_left.height * k;
         lotki_left.x = 0;
@@ -524,20 +568,31 @@ public class GameManager {
         parent.addChildAt(lotki_left, 0);
 
         var lotki_middle:Bitmap = new LotkiCenter;
-        lotki_middle.width = lotkiWidth;
+        var k:Number = stageWidth / lotki_left.width * 0.25;
+        var middleLotkiWidth = stageWidth * 0.25;
+        lotki_middle.width = middleLotkiWidth;
         lotki_middle.height = lotkiHeight;
-        lotki_middle.x = lotkiWidth;
+        lotki_middle.x = rightLotkiWidth;
         lotki_middle.y = stageHeight - lotki_middle.height;
         parent.addChildAt(lotki_middle, 1);
+        lotkiMiddle = lotki_middle;
 
         var lotki_right:Bitmap = new LotkiRight;
-        lotki_right.width = lotkiWidth;
+        lotki_right.width = rightLotkiWidth;
         lotki_right.height = lotkiHeight;
-        lotki_right.x = lotkiWidth + lotki_middle.x;
+        lotki_right.x = middleLotkiWidth + lotki_middle.x;
         lotki_right.y = lotki_middle.y;
         parent.addChildAt(lotki_right, 0);
 
         showBackground();
+
+        yetiStatic = new YetiSWF();
+
+        placeYeti(yetiStatic);
+
+        setActiveYeti(yetiStatic);
+
+        parent.addChildAt(yetiStatic, parent.getChildIndex(lotki_middle));
     }
 
     public function playBackgroundSound():void {
@@ -567,6 +622,9 @@ public class GameManager {
                     showYetiAndLotki();
                     showFruits();
                     playBazarSound();
+                    setTimeout(function(){
+                        playYetiHeadAnimation(function(){});
+                    }, 2000);
                 });
             });
         })
