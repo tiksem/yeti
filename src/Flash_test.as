@@ -38,7 +38,7 @@ import org.osmf.layout.ScaleMode;
 
 import spark.effects.Scale;
 
-[SWF(width="2560", height="1600", frameRate="60")]
+[SWF(width="2560", height="1600", frameRate="24")]
 public class Flash_test extends MovieClip{
     public function adjustStageSize(width:int, height:int):void {
         var widthK:Number = stage.stageWidth / width;

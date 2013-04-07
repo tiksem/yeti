@@ -28,6 +28,8 @@ public class Fruit {
 
     public var onRoundComplete:Function;
 
+    public var hideExecuted:Boolean = true;
+
     private function callOnRoundComplete():void {
         if(onRoundComplete){
             onRoundComplete();
@@ -46,10 +48,12 @@ public class Fruit {
 
     public function show():void {
         fruitSprite.show();
+        hideExecuted = false;
     }
 
     public function hide(completeListener:Function = undefined) {
         fruitSprite.hide(completeListener);
+        hideExecuted = true;
     }
 
     public function set image(value:Bitmap){
@@ -64,6 +68,10 @@ public class Fruit {
         fruitSprite = new FruitSprite(parent);
 
         fruitSprite.onClick = function(){
+            if(hideExecuted){
+                return;
+            }
+
             if(wonFlag){
                 won();
             } else {
