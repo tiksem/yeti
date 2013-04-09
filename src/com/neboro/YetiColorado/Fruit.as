@@ -21,30 +21,12 @@ import flash.media.Sound;
 public class Fruit {
     private var fruitSprite:FruitSprite;
 
-    public var looseSounds:Array;
-    public var wonSounds:Array;
-
     public var wonFlag:Boolean = false;
-
-    public var onRoundComplete:Function;
-
     public var hideExecuted:Boolean = true;
 
-    private function callOnRoundComplete():void {
-        if(onRoundComplete){
-            onRoundComplete();
-        }
-    }
+    public var onLoose:Function;
 
-    public function loose():void {
-        playRandomSound(looseSounds);
-        onRoundComplete();
-    }
-
-    public function won():void {
-        playRandomSound(wonSounds);
-        onRoundComplete();
-    }
+    public var onWin:Function;
 
     public function show():void {
         fruitSprite.show();
@@ -73,9 +55,9 @@ public class Fruit {
             }
 
             if(wonFlag){
-                won();
+                onWin();
             } else {
-                loose();
+                onLoose();
             }
         }
     }

@@ -7,6 +7,13 @@
  */
 package com.neboro.utilities {
     public function getRandomInt(minNum:Number, maxNum:Number):Number {
-        return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
+        var rand = Math.random();
+        if(rand >= 1.0){
+            rand = rand - 0.1;
+        }
+
+        maxNum--;
+
+        return Math.floor( minNum + ( rand * ( maxNum - minNum + 1 ) ));
     }
 }

@@ -14,6 +14,7 @@ import com.neboro.flashUtilities.setSingleEventListener;
 import com.neboro.utilities.chooseElementsFrom;
 import com.neboro.utilities.getElementsOfByIndexingArray;
 import com.neboro.utilities.getRandomElementOf;
+import com.neboro.utilities.getRandomInt;
 
 import flash.display.AVM1Movie;
 
@@ -28,7 +29,16 @@ import flash.media.SoundChannel;
 import flash.media.SoundTransform;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
+import flash.text.Font;
+import flash.text.TextField;
+import flash.text.TextFormat;
 import flash.utils.setTimeout;
+
+import flashx.textLayout.formats.TextAlign;
+
+import mx.effects.Fade;
+import mx.effects.easing.Exponential;
+import mx.events.EffectEvent;
 
 public class GameManager {
     [Embed("../../../assets/swfs/Yetigo.swf")]
@@ -163,6 +173,12 @@ public class GameManager {
     [Embed(source="../../../assets/give.mp3")]
     private var GiveSound39:Class;
 
+    [Embed(source="../../../assets/sounds/win.mp3")]
+    private var WinSound:Class;
+
+    [Embed(source="../../../assets/sounds/loose.mp3")]
+    private var LooseSound:Class;
+
     [Embed(source="../../../assets/fruits/apples_with_grad.png", mimeType="image/png")]
     private var MyImage:Class;
 
@@ -186,9 +202,6 @@ public class GameManager {
 
     [Embed(source="../../../assets/fruits/cherry.png", mimeType="image/png")]
     private var MyImage8:Class;
-
-    [Embed(source="../../../assets/fruits/cherry.png", mimeType="image/png")]
-    private var MyImage9:Class;
 
     [Embed(source="../../../assets/fruits/coconut.png", mimeType="image/png")]
     private var MyImage10:Class;
@@ -280,6 +293,9 @@ public class GameManager {
     [Embed(source="../../../assets/fruits/watermelon.png", mimeType="image/png")]
     private var MyImage39:Class;
 
+    [Embed(source="../../../assets/images/Cloud.png", mimeType="image/png")]
+    private var Cloud:Class;
+
     [Embed(source="../../../assets/images/background.jpg", mimeType="image/jpg")]
     private var Background:Class;
 
@@ -313,7 +329,49 @@ public class GameManager {
     [Embed(source="../../../assets/background_sounds/opus_opium_-_Momentums.mp3")]
     private var BackgroundSound5:Class;
 
+    private static const FRUIT_NAMES:Array = [
+        "Apple",
+        "Banana",
+        "Beet",
+        "Blueberry",
+        "Broccoli",
+        "Cabbage",
+        "Carrot",
+        "Cherry",
+        "Coconut",
+        "Corn",
+        "Cucumber",
+        "Currant",
+        "Eggplant",
+        "Garlic",
+        "Grapefruit",
+        "Grapes",
+        "Kiwi",
+        "Lemon",
+        "Lime",
+        "Nuts",
+        "Olive",
+        "Onion",
+        "Orange",
+        "Passion fruit",
+        "Peach",
+        "Pear",
+        "Peas",
+        "Pepper",
+        "Pineapple",
+        "Plum",
+        "Pomegranate",
+        "Potato",
+        "Pumpkin",
+        "Radish",
+        "Raspberry",
+        "Strawberry",
+        "Tomato",
+        "Watermelon"
+    ];
+
     private static const YETI_SIZE_PERCENTAGE:Number = 0.5;
+    private static const CLOUD_SIZE_PERCENTAGE:Number = 0.38;
 
     private var soundClasses:Array = []
 
@@ -323,28 +381,48 @@ public class GameManager {
     private var bitmaps:Array;
     private var parent:DisplayObjectContainer;
 
+    private var wonFruitName:String;
+    private var wonFruitNameTextField:TextField;
+
     private var stageHeight:int;
     private var stageWidth:int;
+
+    [Embed(source="../../../assets/RAVIE.TTF", fontName="Ravie", mimeType="application/x-font-truetype")]
+    private static var RavieFont:Class;
+
+    private var textFont:Font = new RavieFont;
 
     private var yetiStatic:MovieClip;
     private var yetiHeadAnimation:MovieClip;
     private var yeti:MovieClip;
     private var lotkiMiddle:DisplayObject;
+    private var cloud:Bitmap;
 
     private function showFruits():void {
+        if(bitmaps.length != FRUIT_NAMES.length){
+            throw new Error("bitmaps.length != FRUIT_NAMES.length");
+        }
+
         var randomItems = chooseElementsFrom(bitmaps, fruits.length);
         var bitmapsToAssign = randomItems.elements;
         var soundsToAssign = getElementsOfByIndexingArray(loseWonSounds, randomItems.indexes);
 
+        var wonIndex:int = getRandomInt(0, fruits.length);
 
         for(var i = 0; i < fruits.length; i++) {
             fruits[i].image = new bitmapsToAssign[i];
-            fruits[i].looseSounds = soundsToAssign[i].loose;
-            fruits[i].looseSounds = soundsToAssign[i].won;
+
+            if(wonIndex == i){
+                fruits[i].wonFlag = true;
+                wonFruitName = FRUIT_NAMES[randomItems.indexes[i]] as String;
+            } else {
+                fruits[i].wonFlag = false;
+            }
         }
 
         playRandomSound(giveSounds, function(){
             showFruitSprites();
+            showText();
         });
     }
 
@@ -366,14 +444,103 @@ public class GameManager {
         }
     }
 
+    private function onLoose():void {
+        playSound(new LooseSound as Sound, function(){
+
+        });
+        hideFruits();
+    }
+
+    private function onWin():void {
+        playSound(new WinSound as Sound, function(){
+
+        });
+        hideFruits();
+    }
+
+    private function hideFruits(){
+        hideFruitSprites();
+        hideText();
+    }
+
+    private function createFade(completeListener:Function, alphaFrom:Number, hide:Boolean):Fade {
+        var fade:Fade = new Fade();
+        fade.addEventListener(EffectEvent.EFFECT_END, completeListener);
+        fade.alphaFrom = alphaFrom;
+        fade.duration = 1000;
+        fade.easingFunction = Exponential.easeOut;
+
+        if(hide){
+            fade.alphaTo = 0;
+        } else {
+            fade.alphaTo = 1;
+        }
+
+        return fade;
+    }
+
+    private function showText() {
+        var text:TextField = new TextField();
+        text.alpha = 0;
+        text.text = wonFruitName;
+
+        var textFormat:TextFormat = new TextFormat();
+        textFormat.font = textFont.fontName;
+        textFormat.align = TextAlign.CENTER;
+        textFormat.size = 100;
+        textFormat.color = 0xFF8000;
+        //text.embedFonts = true;
+        text.setTextFormat(textFormat);
+
+        cloud = new Cloud;
+        var prevWidth = cloud.width;
+        var width:Number = stageWidth * CLOUD_SIZE_PERCENTAGE;
+        cloud.width = width;
+        var k:Number = width / prevWidth;
+        cloud.height *= k;
+        cloud.x = 0;
+        cloud.y = 0;
+        cloud.alpha = 0;
+
+        var fade:Fade = createFade(function(){
+
+        }, 0, false);
+
+        fade.play([cloud, text]);
+
+        parent.addChild(cloud);
+
+        text.width = cloud.width;
+        text.height = text.textHeight;
+
+        text.y = (cloud.height - text.height) / 2;
+
+        parent.addChild(text);
+        wonFruitNameTextField = text;
+    }
+
+    private function hideText():void {
+        var fade:Fade = createFade(function(){
+            try{
+                parent.removeChild(cloud);
+                parent.removeChild(wonFruitNameTextField);
+            } catch (e:Error) {
+
+            }
+        }, 1, true);
+
+        fade.play([cloud, wonFruitNameTextField]);
+        wonFruitNameTextField = undefined;
+    }
+
     public function GameManager(parent:DisplayObjectContainer) {
         this.parent = parent;
 
         bitmaps = [MyImage, MyImage2, MyImage3, MyImage4, MyImage5, MyImage6, MyImage7, MyImage8,
-            MyImage9, MyImage10, MyImage11, MyImage12, MyImage13, MyImage14, MyImage15, MyImage16,
+             MyImage10, MyImage11, MyImage12, MyImage13, MyImage14, MyImage15, MyImage16,
             MyImage17, MyImage18, MyImage19, MyImage20, MyImage21, MyImage22, MyImage23, MyImage24,
-            MyImage25, MyImage26, MyImage27, MyImage28, MyImage29, MyImage31, MyImage32, MyImage33,
-            MyImage34, MyImage34, MyImage36, MyImage37, MyImage38, MyImage39
+            MyImage25, MyImage26, MyImage27, MyImage28, MyImage29, MyImage30, MyImage31, MyImage32, MyImage33,
+            MyImage34, MyImage35, MyImage36, MyImage37, MyImage38, MyImage39
         ];
         var soundsCollection:SoundsCollection = new SoundsCollection();
         giveSounds = [new GiveSound, new GiveSound2, new GiveSound3, new GiveSound4, new GiveSound5, new GiveSound6, new GiveSound7, new GiveSound8,
@@ -395,7 +562,8 @@ public class GameManager {
         for(var i = 0; i < 3; i++){
             var fruit:Fruit = fruits[i] = new Fruit(parent);
             fruit.position = i;
-            fruit.onRoundComplete = hideFruitSprites;
+            fruit.onLoose = onLoose;
+            fruit.onWin = onWin;
         }
     }
 
@@ -422,8 +590,8 @@ public class GameManager {
             if(changeSize){
                 swf.x = 0;
                 swf.y = 0;
-                swf.width = stageWidth;
-                swf.height = stageHeight;
+                //swf.width = stageWidth;
+                //swf.height = swf.height;
             }
 
             var endHandler:Function = function(){
@@ -628,6 +796,7 @@ public class GameManager {
                 });
             });
         })
+
     }
 }
 }

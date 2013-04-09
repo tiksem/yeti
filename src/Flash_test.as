@@ -11,6 +11,9 @@ import com.neboro.YetiColorado.FruitSprite;
 import com.neboro.YetiColorado.GameManager;
 import com.neboro.flashUtilities.loadFromFile;
 
+import flash.desktop.NativeApplication;
+import flash.desktop.SystemIdleMode;
+
 import flash.display.Bitmap;
 
 import flash.display.DisplayObject;
@@ -26,13 +29,16 @@ import flash.display.StageDisplayState;
 import flash.display.StageOrientation;
 import flash.display.StageScaleMode;
 import flash.events.Event;
+import flash.events.KeyboardEvent;
 import flash.net.URLRequest;
 import flash.system.LoaderContext;
 import flash.system.System;
 import flash.text.TextField;
+import flash.ui.Keyboard;
 
 import mx.core.FlexTextField;
 import mx.effects.Fade;
+import mx.events.FlexEvent;
 
 import org.osmf.layout.ScaleMode;
 
@@ -54,6 +60,20 @@ public class Flash_test extends MovieClip{
 
         var game:GameManager = new GameManager(this);
         game.run();
+        NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+        NativeApplication.nativeApplication.systemIdleMode=SystemIdleMode.NORMAL;
+    }
+
+    protected function onKeyDown(event:KeyboardEvent):void
+    {
+        if(event.keyCode == Keyboard.BACK || event.keyCode == Keyboard.HOME)
+        {
+            onBackKeyPressed();
+        }
+    }
+
+    private function onBackKeyPressed():void {
+        NativeApplication.nativeApplication.exit(0);
     }
 
     public function onApplicationComplete():void {
