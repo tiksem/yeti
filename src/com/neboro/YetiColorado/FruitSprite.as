@@ -7,6 +7,7 @@
  */
 package com.neboro.YetiColorado {
 import com.neboro.flashUtilities.loadFromFile;
+import com.neboro.flashUtilities.setSingleEventListener;
 
 import flash.display.Bitmap;
 
@@ -42,7 +43,7 @@ public class FruitSprite extends Sprite{
 
     private var positionId:int = POSITION_LEFT;
 
-    private var fade:Fade;
+    private var fade:Fade = new Fade();
 
     public function set position(position:int):void {
         positionId = position;
@@ -71,7 +72,11 @@ public class FruitSprite extends Sprite{
 
     public function set image(fruitImage:Bitmap) {
         if(this.fruitImage){
-            removeChild(this.fruitImage);
+            try{
+                removeChild(this.fruitImage);
+            } catch(e) {
+
+            }
         }
 
         this.fruitImage = fruitImage;
@@ -89,7 +94,6 @@ public class FruitSprite extends Sprite{
             fade.stop();
         }
 
-        fade = new Fade();
         fade.target = fruitImage;
         fade.duration = FADE_DURATION;
         fade.easingFunction = mx.effects.easing.Exponential.easeOut;
@@ -101,7 +105,7 @@ public class FruitSprite extends Sprite{
         fade.play();
 
         if(completeListener){
-            fade.addEventListener(EffectEvent.EFFECT_END, completeListener);
+            setSingleEventListener(fade, EffectEvent.EFFECT_END, completeListener);
         }
     }
 

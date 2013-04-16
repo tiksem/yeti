@@ -26,8 +26,19 @@ public function playRandomSound(sounds:Array, completeListener:Function = undefi
 
     var channel:SoundChannel = sound.play();
 
+    savedSounds[channel] = {
+        sound: sound
+    };
+
+    if(!isSoundEnabled){
+        channel.stop();
+    }
+
     if(completeListener){
-        setSingleEventListener(channel, Event.SOUND_COMPLETE, completeListener);
+        setSingleEventListener(channel, Event.SOUND_COMPLETE, function(){
+            completeListener();
+            savedSounds[channel] = undefined;
+        });
     }
 }
 }

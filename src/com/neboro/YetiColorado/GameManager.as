@@ -23,7 +23,9 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
 import flash.display.MovieClip;
+import flash.display.Sprite;
 import flash.events.Event;
+import flash.events.MouseEvent;
 import flash.media.Sound;
 import flash.media.SoundChannel;
 import flash.media.SoundTransform;
@@ -39,6 +41,7 @@ import flashx.textLayout.formats.TextAlign;
 import mx.effects.Fade;
 import mx.effects.easing.Exponential;
 import mx.events.EffectEvent;
+import mx.states.SetEventHandler;
 
 public class GameManager {
     [Embed("../../../assets/swfs/Yetigo.swf")]
@@ -53,125 +56,14 @@ public class GameManager {
     [Embed("../../../assets/swfs/yetiStatic.swf")]
     private var YetiSWF:Class;
 
+    [Embed("../../../assets/swfs/loose.swf")]
+    private var YetiLoose:Class;
+
+    [Embed("../../../assets/swfs/win.swf")]
+    private var YetiWin:Class;
+
     [Embed("../../../assets/swfs/YetiHeadAnimation.swf")]
     private var YetiHeadAnimationSWF:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound2:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound3:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound4:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound5:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound6:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound7:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound8:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound9:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound10:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound11:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound12:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound13:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound14:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound15:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound16:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound17:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound18:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound19:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound20:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound21:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound22:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound23:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound24:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound25:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound26:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound27:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound28:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound29:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound30:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound31:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound32:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound33:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound34:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound35:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound36:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound37:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound38:Class;
-
-    [Embed(source="../../../assets/give.mp3")]
-    private var GiveSound39:Class;
 
     [Embed(source="../../../assets/sounds/win.mp3")]
     private var WinSound:Class;
@@ -308,6 +200,10 @@ public class GameManager {
     [Embed(source="../../../assets/images/lotki_right.png", mimeType="image/png")]
     private var LotkiRight:Class;
 
+
+    [Embed(source="../../../assets/images/skip.png", mimeType="image/png")]
+    private var SkipButton:Class;
+
     [Embed(source="../../../assets/inroduce.mp3")]
     private var IntroducingSound:Class;
 
@@ -372,6 +268,8 @@ public class GameManager {
 
     private static const YETI_SIZE_PERCENTAGE:Number = 0.5;
     private static const CLOUD_SIZE_PERCENTAGE:Number = 0.38;
+    private static const SKIP_BUTTON_PERCENTAGE:Number = 0.14;
+    private static const SKIP_BUTTON_PADDING:Number = 0.02;
 
     private var soundClasses:Array = []
 
@@ -382,21 +280,28 @@ public class GameManager {
     private var parent:DisplayObjectContainer;
 
     private var wonFruitName:String;
-    private var wonFruitNameTextField:TextField;
+    private var text:TextField = new TextField();
 
     private var stageHeight:int;
     private var stageWidth:int;
+
+    private var skipButton:DisplayObjectContainer;
 
     [Embed(source="../../../assets/RAVIE.TTF", fontName="Ravie", mimeType="application/x-font-truetype")]
     private static var RavieFont:Class;
 
     private var textFont:Font = new RavieFont;
 
-    private var yetiStatic:MovieClip;
-    private var yetiHeadAnimation:MovieClip;
+    private var yetiStatic:MovieClip = new YetiSWF;
+    private var yetiHeadAnimation:MovieClip = new YetiHeadAnimationSWF;
+    private var yetiLoose:MovieClip = new YetiLoose;
+    private var yetiWin:MovieClip = new YetiWin;
     private var yeti:MovieClip;
     private var lotkiMiddle:DisplayObject;
     private var cloud:Bitmap;
+    private var skipped:Boolean = false;
+    private var skipper:Function;
+    private var introducingSoundChannel:SoundChannel;
 
     private function showFruits():void {
         if(bitmaps.length != FRUIT_NAMES.length){
@@ -405,12 +310,11 @@ public class GameManager {
 
         var randomItems = chooseElementsFrom(bitmaps, fruits.length);
         var bitmapsToAssign = randomItems.elements;
-        var soundsToAssign = getElementsOfByIndexingArray(loseWonSounds, randomItems.indexes);
 
         var wonIndex:int = getRandomInt(0, fruits.length);
 
         for(var i = 0; i < fruits.length; i++) {
-            fruits[i].image = new bitmapsToAssign[i];
+            fruits[i].image = bitmapsToAssign[i];
 
             if(wonIndex == i){
                 fruits[i].wonFlag = true;
@@ -420,10 +324,8 @@ public class GameManager {
             }
         }
 
-        playRandomSound(giveSounds, function(){
-            showFruitSprites();
-            showText();
-        });
+        showFruitSprites();
+        showText();
     }
 
     private function showFruitSprites(){
@@ -445,6 +347,7 @@ public class GameManager {
     }
 
     private function onLoose():void {
+        playYetiLooseAnimation();
         playSound(new LooseSound as Sound, function(){
 
         });
@@ -452,6 +355,7 @@ public class GameManager {
     }
 
     private function onWin():void {
+        playYetiWinAnimation();
         playSound(new WinSound as Sound, function(){
 
         });
@@ -465,7 +369,7 @@ public class GameManager {
 
     private function createFade(completeListener:Function, alphaFrom:Number, hide:Boolean):Fade {
         var fade:Fade = new Fade();
-        fade.addEventListener(EffectEvent.EFFECT_END, completeListener);
+        setSingleEventListener(fade, EffectEvent.EFFECT_END, completeListener);
         fade.alphaFrom = alphaFrom;
         fade.duration = 1000;
         fade.easingFunction = Exponential.easeOut;
@@ -480,7 +384,6 @@ public class GameManager {
     }
 
     private function showText() {
-        var text:TextField = new TextField();
         text.alpha = 0;
         text.text = wonFruitName;
 
@@ -492,7 +395,6 @@ public class GameManager {
         //text.embedFonts = true;
         text.setTextFormat(textFormat);
 
-        cloud = new Cloud;
         var prevWidth = cloud.width;
         var width:Number = stageWidth * CLOUD_SIZE_PERCENTAGE;
         cloud.width = width;
@@ -508,29 +410,63 @@ public class GameManager {
 
         fade.play([cloud, text]);
 
-        parent.addChild(cloud);
-
         text.width = cloud.width;
         text.height = text.textHeight;
 
         text.y = (cloud.height - text.height) / 2;
-
-        parent.addChild(text);
-        wonFruitNameTextField = text;
     }
 
     private function hideText():void {
         var fade:Fade = createFade(function(){
             try{
-                parent.removeChild(cloud);
-                parent.removeChild(wonFruitNameTextField);
+
             } catch (e:Error) {
 
             }
         }, 1, true);
 
-        fade.play([cloud, wonFruitNameTextField]);
-        wonFruitNameTextField = undefined;
+        fade.play([cloud, text]);
+    }
+
+    private function initSkipButton():void {
+        var skipButton:Bitmap = new SkipButton;
+        var width:int = SKIP_BUTTON_PERCENTAGE * stageWidth;
+        var prevWidth:int = skipButton.width;
+        var k:Number = width / prevWidth;
+        skipButton.width = width;
+        skipButton.height = skipButton.height * k;
+        skipButton.x = stageWidth - stageWidth * SKIP_BUTTON_PADDING - skipButton.width;
+        skipButton.y = stageHeight - stageWidth * SKIP_BUTTON_PADDING - skipButton.height;
+
+        var skipParent:DisplayObjectContainer = new Sprite();
+        skipParent.addChild(skipButton);
+
+        setSingleEventListener(skipParent, MouseEvent.CLICK, function(){
+            removeSkipButton();
+            skipped = true;
+            skipper();
+            introducingSoundChannel.stop();
+        });
+
+        parent.addChild(skipParent);
+        this.skipButton = skipParent;
+    }
+
+    private function placeBeforeSkipButton(what:DisplayObject):void {
+        if(skipButton){
+            parent.addChildAt(what,  parent.getChildIndex(skipButton));
+        } else {
+            parent.addChild(what);
+        }
+    }
+
+    private function removeSkipButton(){
+        if(!skipButton){
+            return;
+        }
+
+        parent.removeChild(skipButton);
+        skipButton = undefined;
     }
 
     public function GameManager(parent:DisplayObjectContainer) {
@@ -542,20 +478,9 @@ public class GameManager {
             MyImage25, MyImage26, MyImage27, MyImage28, MyImage29, MyImage30, MyImage31, MyImage32, MyImage33,
             MyImage34, MyImage35, MyImage36, MyImage37, MyImage38, MyImage39
         ];
-        var soundsCollection:SoundsCollection = new SoundsCollection();
-        giveSounds = [new GiveSound, new GiveSound2, new GiveSound3, new GiveSound4, new GiveSound5, new GiveSound6, new GiveSound7, new GiveSound8,
-            new GiveSound9, new GiveSound10, new GiveSound11, new GiveSound12, new GiveSound13, new GiveSound14, new GiveSound15, new GiveSound16,
-            new GiveSound17, new GiveSound18, new GiveSound19, new GiveSound20, new GiveSound21, new GiveSound22, new GiveSound23, new GiveSound24,
-            new GiveSound25, new GiveSound26, new GiveSound27, new GiveSound28, new GiveSound29, new GiveSound31, new GiveSound32, new GiveSound33,
-            new GiveSound34, new GiveSound34, new GiveSound36, new GiveSound37, new GiveSound38, new GiveSound39
-        ];
 
-        loseWonSounds = []
-        for(var i = 0; i < giveSounds.length; i++){
-            var sounds:SoundsCollection = new SoundsCollection();
-            sounds.loose = [new GiveSound];
-            sounds.won = [new GiveSound];
-            loseWonSounds.push(sounds);
+        for(var i = 0; i < bitmaps.length; i++){
+            bitmaps[i] = new bitmaps[i];
         }
 
         fruits = new <Fruit>[];
@@ -565,6 +490,8 @@ public class GameManager {
             fruit.onLoose = onLoose;
             fruit.onWin = onWin;
         }
+
+        cloud = new Cloud;
     }
 
     public function loadSWF(swfClass:Class, completeListener:Function){
@@ -581,8 +508,10 @@ public class GameManager {
 
     public function playSWF(swfClass:Class, delayBeforeDeleteFromScene:int,
                             completeListener:Function = undefined, play:Boolean = true, changeSize:Boolean = true)
+    :Function
     {
         var loader:Loader = new Loader();
+        var skipperOut:Function;
 
         setSingleEventListener(loader.contentLoaderInfo, Event.COMPLETE, function(e:Event){
             var swf:MovieClip = MovieClip(loader.content);
@@ -617,41 +546,75 @@ public class GameManager {
                 swf.play();
             }
 
-            parent.addChild(swf);
+            placeBeforeSkipButton(swf);
+
+            var skipper:Function = function(){
+                swf.removeEventListener(Event.ENTER_FRAME, endHandler);
+                parent.removeChild(swf);
+
+                swf.stop();
+                if(completeListener){
+                    completeListener(swf);
+                }
+            }
+
+            skipperOut = skipper;
         });
 
         var loaderContext:LoaderContext = new LoaderContext(false, ApplicationDomain.currentDomain);
         loaderContext.allowCodeImport = true;
         loaderContext.allowLoadBytesCodeExecution = true;
         loader.loadBytes(new swfClass, loaderContext);
+
+        return function(){
+            if(skipperOut){
+                skipperOut();
+            } else {
+                loader.close();
+            }
+        }
     }
 
-    private function playLoopingSWF(swfClass, duration, completeListener:Function):void{
+    private function playLoopingSWF(swfClass, duration, completeListener:Function):Function {
         var swf:MovieClip = new swfClass();
         swf.play();
         swf.x = 0;
         swf.y = 0;
         swf.width = stageWidth;
         swf.height = stageHeight;
-        parent.addChild(swf);
+        placeBeforeSkipButton(swf);
+
+        var skipper = {
+            active: false,
+            skipper: function(){
+                swf.stop();
+                parent.removeChild(swf);
+                completeListener();
+                skipper.active = true;
+            }
+        };
 
         setTimeout(function(){
-            swf.stop();
-            parent.removeChild(swf);
-            completeListener();
-        }, duration)
+            if(!skipper.active){
+                swf.stop();
+                parent.removeChild(swf);
+                completeListener();
+            }
+        }, duration);
+
+        return skipper.skipper;
     }
 
-    public function playYetiInSnowMovie(completeListener:Function):void {
-        playLoopingSWF(YetiInSnowSWF, 7500, completeListener);
+    public function playYetiInSnowMovie(completeListener:Function):Function {
+        return playLoopingSWF(YetiInSnowSWF, 7500, completeListener);
     }
 
     public function playNeboroLogoMovie(completeListener:Function):void {
         playSWF(NeboroLogo, 2000, completeListener);
     }
 
-    public function playTravellingLogoMovie(completeListener:Function):void {
-        playSWF(TravellingMovie, 2000, completeListener);
+    public function playTravellingLogoMovie(completeListener:Function):Function {
+        return playSWF(TravellingMovie, 2000, completeListener);
     }
 
     private function showBackground():void {
@@ -689,9 +652,9 @@ public class GameManager {
         var width:Number = stageWidth * YETI_SIZE_PERCENTAGE;
         yeti.width = width;
         var k:Number = width / yetiPrevWidth;
-        yeti.height *= k;
+        yeti.height = yeti.height * k * 1.06;
         yeti.x = (stageWidth - width) / 2;
-        yeti.y = lotkiMiddle.y - yeti.height + stageHeight * -0.06;
+        yeti.y = lotkiMiddle.y - yeti.height + stageHeight * 0.06;
     }
 
     private function setActiveYeti(activeYeti:MovieClip):void {
@@ -707,21 +670,34 @@ public class GameManager {
         yeti.visible = true;
     }
 
-    private function playYetiAnimation(swfClass, framesCount:int,  completeListener:Function):void {
-        var animYeti:MovieClip = new swfClass;
-        placeYeti(animYeti);
+    private function playYetiAnimation(animYeti:MovieClip, framesCount:int,  completeListener:Function):void {
         parent.addChildAt(animYeti, parent.getChildIndex(lotkiMiddle));
 
         setActiveYeti(animYeti);
 
         setTimeout(function(){
-            setActiveYeti(yetiStatic);
+            if(animYeti == yeti){
+                setActiveYeti(yetiStatic);
+            }
+
             parent.removeChild(animYeti);
         }, framesCount * 1.0 / 24.0 * 1000);
     }
 
     private function playYetiHeadAnimation(completeListener:Function):void {
-        playYetiAnimation(YetiHeadAnimationSWF, 61, completeListener);
+        playYetiAnimation(yetiHeadAnimation, 50, completeListener);
+    }
+
+    private function playYetiLooseAnimation():void {
+        playYetiAnimation(yetiLoose, 30, function(){
+
+        });
+    }
+
+    private function playYetiWinAnimation():void {
+        playYetiAnimation(yetiWin, 30, function(){
+
+        });
     }
 
     private function showYetiAndLotki():void {
@@ -754,27 +730,41 @@ public class GameManager {
 
         showBackground();
 
-        yetiStatic = new YetiSWF();
-
         placeYeti(yetiStatic);
+        placeYeti(yetiHeadAnimation);
+        placeYeti(yetiLoose);
+        placeYeti(yetiWin);
 
         setActiveYeti(yetiStatic);
 
         parent.addChildAt(yetiStatic, parent.getChildIndex(lotki_middle));
+
+        placeBeforeSkipButton(cloud);
+        placeBeforeSkipButton(text);
     }
 
     public function playBackgroundSound():void {
         var handler:Function = function(){
             var sound = getRandomElementOf([new BackgroundSound, new BackgroundSound2,
                 new BackgroundSound3, new BackgroundSound4, new BackgroundSound5]);
-            playSoundSpecifyVolume(sound as Sound, 0.4, handler);
+            playSoundSpecifyVolume(sound as Sound, 0.5, handler);
         }
 
-        playSoundSpecifyVolume(new BackgroundSound, 0.4, handler);
+        playSoundSpecifyVolume(new BackgroundSound, 0.5, handler);
     }
 
     public function playBazarSound():void {
         playLoopingSound(new BazarSound, 0.14);
+    }
+
+    public function loopYetiHeadAnimation(){
+        var duration = getRandomInt(3500, 7000);
+        setTimeout(function(){
+            if(yeti is YetiSWF){
+                playYetiHeadAnimation(function(){});
+            }
+            loopYetiHeadAnimation();
+        }, duration)
     }
 
     public function run():void {
@@ -784,16 +774,23 @@ public class GameManager {
         playBackgroundSound();
 
         playNeboroLogoMovie(function(){
-            new IntroducingSound().play();
-            playYetiInSnowMovie(function(){
-                playTravellingLogoMovie(function(){
+            introducingSoundChannel = (new IntroducingSound as Sound).play();
+            initSkipButton();
+            skipper = playYetiInSnowMovie(function(){
+                if(!skipped){
+                    skipper = playTravellingLogoMovie(function(){
+                        showYetiAndLotki();
+                        showFruits();
+                        playBazarSound();
+                        loopYetiHeadAnimation();
+                        removeSkipButton();
+                    });
+                } else {
                     showYetiAndLotki();
                     showFruits();
                     playBazarSound();
-                    setTimeout(function(){
-                        playYetiHeadAnimation(function(){});
-                    }, 2000);
-                });
+                    loopYetiHeadAnimation();
+                }
             });
         })
 
