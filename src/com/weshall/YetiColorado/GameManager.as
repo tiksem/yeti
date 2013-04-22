@@ -5,16 +5,16 @@
  * Time: 22:10
  * To change this template use File | Settings | File Templates.
  */
-package com.neboro.YetiColorado {
-import com.neboro.flashUtilities.playLoopingSound;
-import com.neboro.flashUtilities.playRandomSound;
-import com.neboro.flashUtilities.playSound;
-import com.neboro.flashUtilities.playSoundSpecifyVolume;
-import com.neboro.flashUtilities.setSingleEventListener;
-import com.neboro.utilities.chooseElementsFrom;
-import com.neboro.utilities.getElementsOfByIndexingArray;
-import com.neboro.utilities.getRandomElementOf;
-import com.neboro.utilities.getRandomInt;
+package com.weshall.YetiColorado {
+import com.weshall.flashUtilities.playLoopingSound;
+import com.weshall.flashUtilities.playRandomSound;
+import com.weshall.flashUtilities.playSound;
+import com.weshall.flashUtilities.playSoundSpecifyVolume;
+import com.weshall.flashUtilities.setSingleEventListener;
+import com.weshall.utilities.chooseElementsFrom;
+import com.weshall.utilities.getElementsOfByIndexingArray;
+import com.weshall.utilities.getRandomElementOf;
+import com.weshall.utilities.getRandomInt;
 
 import flash.display.AVM1Movie;
 
@@ -47,8 +47,8 @@ public class GameManager {
     [Embed("../../../assets/swfs/Yetigo.swf")]
     private var YetiInSnowSWF:Class;
 
-    [Embed("../../../assets/swfs/neboroText.swf", mimeType="application/octet-stream")]
-    private var NeboroLogo:Class;
+    [Embed("../../../assets/swfs/logo.swf", mimeType="application/octet-stream")]
+    private var Logo:Class;
 
     [Embed("../../../assets/swfs/travelling.swf", mimeType="application/octet-stream")]
     private var TravellingMovie:Class;
@@ -609,8 +609,8 @@ public class GameManager {
         return playLoopingSWF(YetiInSnowSWF, 7500, completeListener);
     }
 
-    public function playNeboroLogoMovie(completeListener:Function):void {
-        playSWF(NeboroLogo, 2000, completeListener);
+    public function playLogoMovie(completeListener:Function):void {
+        playSWF(Logo, 2000, completeListener);
     }
 
     public function playTravellingLogoMovie(completeListener:Function):Function {
@@ -685,7 +685,7 @@ public class GameManager {
     }
 
     private function playYetiHeadAnimation(completeListener:Function):void {
-        playYetiAnimation(yetiHeadAnimation, 50, completeListener);
+        playYetiAnimation(yetiHeadAnimation, 61, completeListener);
     }
 
     private function playYetiLooseAnimation():void {
@@ -773,7 +773,7 @@ public class GameManager {
 
         playBackgroundSound();
 
-        playNeboroLogoMovie(function(){
+        playLogoMovie(function(){
             introducingSoundChannel = (new IntroducingSound as Sound).play();
             initSkipButton();
             skipper = playYetiInSnowMovie(function(){

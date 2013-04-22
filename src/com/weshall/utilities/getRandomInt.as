@@ -5,7 +5,7 @@
  * Time: 22:35
  * To change this template use File | Settings | File Templates.
  */
-package com.neboro.utilities {
+package com.weshall.utilities {
     public function getRandomInt(minNum:Number, maxNum:Number):Number {
         var rand = Math.random();
         if(rand >= 1.0){

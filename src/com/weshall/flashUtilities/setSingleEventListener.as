@@ -5,7 +5,7 @@
  * Time: 21:45
  * To change this template use File | Settings | File Templates.
  */
-package com.neboro.flashUtilities {
+package com.weshall.flashUtilities {
 import flash.events.Event;
 
 public function setSingleEventListener(target:Object, type:String, listener:Function):void {

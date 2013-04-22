@@ -5,9 +5,9 @@
  * Time: 13:09
  * To change this template use File | Settings | File Templates.
  */
-package com.neboro.YetiColorado {
-import com.neboro.flashUtilities.loadFromFile;
-import com.neboro.flashUtilities.setSingleEventListener;
+package com.weshall.YetiColorado {
+import com.weshall.flashUtilities.loadFromFile;
+import com.weshall.flashUtilities.setSingleEventListener;
 
 import flash.display.Bitmap;
 

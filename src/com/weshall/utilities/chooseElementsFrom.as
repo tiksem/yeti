@@ -5,7 +5,7 @@
  * Time: 23:38
  * To change this template use File | Settings | File Templates.
  */
-package com.neboro.utilities {
+package com.weshall.utilities {
     public function chooseElementsFrom(elements:Array, count:int) {
         if(count > elements.length){
             throw new Error("invalid count");

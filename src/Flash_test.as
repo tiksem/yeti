@@ -6,13 +6,14 @@
  * To change this template use File | Settings | File Templates.
  */
 package {
-import com.neboro.YetiColorado.GameManager;
+import com.weshall.YetiColorado.GameManager;
 
 import flash.desktop.NativeApplication;
 import flash.display.MovieClip;
 import flash.display.StageAlign;
 import flash.display.StageScaleMode;
 import flash.events.Event;
+import flash.events.KeyboardEvent;
 import flash.events.LocationChangeEvent;
 import flash.events.MouseEvent;
 import flash.geom.Rectangle;
@@ -22,11 +23,14 @@ import flash.media.StageWebView;
 import flash.net.URLRequest;
 import flash.net.navigateToURL;
 import flash.system.Capabilities;
+import flash.ui.Keyboard;
 
 [SWF(width="2560", height="1600", frameRate="24")]
 public class Flash_test extends MovieClip{
     [Embed(source="banner.html",mimeType="application/octet-stream")]
     var Banner:Class;
+
+    var bannerViewPort:Rectangle;
 
     public function adjustStageSize(width:int, height:int):void {
         var widthK:Number = stage.stageWidth / width;
@@ -50,6 +54,13 @@ public class Flash_test extends MovieClip{
             setSoundEnabled(true);
         });
 
+        NativeApplication.nativeApplication.addEventListener(KeyboardEvent.KEY_DOWN,
+                function(event:KeyboardEvent){
+            if(event.keyCode == Keyboard.BACK){
+                NativeApplication.nativeApplication.exit(0);
+            }
+        });
+
         addEventListener(Event.ADDED_TO_STAGE, init);
     }
 
@@ -57,7 +68,7 @@ public class Flash_test extends MovieClip{
         _stageWebView = new StageWebView () ;
         var bannerWidth:Number = stage.stageWidth * 468 / Capabilities.screenResolutionX;
         var bannerHeight:Number = stage.stageHeight * 60 / Capabilities.screenResolutionY;
-        _stageWebView.viewPort = new Rectangle((stage.stageWidth - bannerWidth) / 2,
+        bannerViewPort = _stageWebView.viewPort = new Rectangle((stage.stageWidth - bannerWidth) / 2,
                 stage.stageHeight - bannerHeight, bannerWidth, bannerHeight);
         // add a listener for when the content of the StageWebView changes
         _stageWebView.addEventListener(LocationChangeEvent.LOCATION_CHANGE,onLocationChange);

@@ -5,7 +5,7 @@
  * Time: 22:20
  * To change this template use File | Settings | File Templates.
  */
-package com.neboro.YetiColorado {
+package com.weshall.YetiColorado {
 public class SoundsCollection {
     public var loose:Array;
     public var won:Array;

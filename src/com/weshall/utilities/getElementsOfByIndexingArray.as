@@ -5,7 +5,7 @@
  * Time: 0:01
  * To change this template use File | Settings | File Templates.
  */
-package com.neboro.utilities {
+package com.weshall.utilities {
     public function getElementsOfByIndexingArray(array:Array, indexes:Array) {
         var result = [];
         for(var i = 0; i < indexes.length; i++){

@@ -8,8 +8,13 @@
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
-        <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/Flash_test-app.xml" package-file-name="Flash_test" />
-        <packaging-ios enabled="true" package-file-name="Flash_test" />
+        <packaging-android enabled="true" use-generated-descriptor="false" custom-descriptor-path="$MODULE_DIR$/Flash_test-app.xml" package-file-name="Flash_test">
+          <files-to-package>
+            <FilePathAndPathInPackage file-path="$MODULE_DIR$/src/assets/images/icons" path-in-package="assets/images/icons" />
+          </files-to-package>
+          <AirSigningOptions key-alias="yeti_adventures_fruits" keystore-path="$MODULE_DIR$/src/assets/swfs/yeti_ad_fruits.keystore" keystore-type="JCEKS" use-temp-certificate="false" />
+        </packaging-android>
+        <packaging-ios package-file-name="Flash_test" />
       </configuration>
     </configurations>
     <compiler-options />

@@ -5,8 +5,8 @@
  * Time: 22:52
  * To change this template use File | Settings | File Templates.
  */
-package com.neboro.flashUtilities {
-import com.neboro.utilities.getRandomElementOf;
+package com.weshall.flashUtilities {
+import com.weshall.utilities.getRandomElementOf;
 
 import flash.events.Event;
 

@@ -5,7 +5,7 @@
  * Time: 13:14
  * To change this template use File | Settings | File Templates.
  */
-package com.neboro.flashUtilities {
+package com.weshall.flashUtilities {
 import flash.display.Loader;
 import flash.display.MovieClip;
 import flash.events.Event;

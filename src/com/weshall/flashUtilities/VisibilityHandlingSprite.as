@@ -5,7 +5,7 @@
  * Time: 13:28
  * To change this template use File | Settings | File Templates.
  */
-package com.neboro.flashUtilities {
+package com.weshall.flashUtilities {
 import flash.display.Sprite;
 
 public class VisibilityHandlingSprite extends Sprite{

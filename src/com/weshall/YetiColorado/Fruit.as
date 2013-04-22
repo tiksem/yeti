@@ -5,10 +5,10 @@
  * Time: 21:26
  * To change this template use File | Settings | File Templates.
  */
-package com.neboro.YetiColorado {
-import com.neboro.flashUtilities.playRandomSound;
-import com.neboro.flashUtilities.setSingleEventListener;
-import com.neboro.utilities.getRandomElementOf;
+package com.weshall.YetiColorado {
+import com.weshall.flashUtilities.playRandomSound;
+import com.weshall.flashUtilities.setSingleEventListener;
+import com.weshall.utilities.getRandomElementOf;
 
 import flash.display.Bitmap;
 import flash.display.DisplayObjectContainer;

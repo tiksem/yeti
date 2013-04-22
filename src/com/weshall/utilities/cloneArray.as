@@ -5,7 +5,7 @@
  * Time: 23:40
  * To change this template use File | Settings | File Templates.
  */
-package com.neboro.utilities {
+package com.weshall.utilities {
     public function cloneArray(source:Array):Array {
         var clone = [];
         for(var i = 0; i < source.length; i++){
