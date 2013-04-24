@@ -4,7 +4,7 @@
     <configurations>
       <configuration name="flash_test" target-platform="Mobile" main-class="Flash_test" output-file="Flash_test.swf" output-folder="$MODULE_DIR$/out/production/flash_test">
         <dependencies target-player="11.1">
-          <sdk name="flex_sdk_4.6" />
+          <sdk name="FlexSDK" />
         </dependencies>
         <compiler-options />
         <packaging-air-desktop />
@@ -24,7 +24,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="flex_sdk_4.6" jdkType="Flex SDK Type (new)" />
+    <orderEntry type="jdk" jdkName="FlexSDK" jdkType="Flex SDK Type (new)" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
