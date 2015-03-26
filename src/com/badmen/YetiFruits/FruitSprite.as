@@ -5,7 +5,7 @@
  * Time: 13:09
  * To change this template use File | Settings | File Templates.
  */
-package com.weshall.YetiColorado {
+package com.badmen.YetiFruits {
 import com.weshall.flashUtilities.loadFromFile;
 import com.weshall.flashUtilities.setSingleEventListener;
 

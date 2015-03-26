@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 package {
-import com.weshall.YetiColorado.GameManager;
+import com.badmen.YetiFruits.GameManager;
 
 import flash.desktop.NativeApplication;
 import flash.display.MovieClip;
@@ -27,8 +27,8 @@ import flash.ui.Keyboard;
 
 [SWF(width="2560", height="1600", frameRate="24")]
 public class Flash_test extends MovieClip{
-    [Embed(source="banner.html",mimeType="application/octet-stream")]
-    var Banner:Class;
+//    [Embed(source="banner.html",mimeType="application/octet-stream")]
+//    var Banner:Class;
 
     var bannerViewPort:Rectangle;
 
@@ -65,19 +65,19 @@ public class Flash_test extends MovieClip{
     }
 
     protected function init(event:Event){
-        _stageWebView = new StageWebView () ;
-        var bannerWidth:Number = stage.stageWidth * 468 / Capabilities.screenResolutionX;
-        var bannerHeight:Number = stage.stageHeight * 60 / Capabilities.screenResolutionY;
-        bannerViewPort = _stageWebView.viewPort = new Rectangle((stage.stageWidth - bannerWidth) / 2,
-                stage.stageHeight - bannerHeight, bannerWidth, bannerHeight);
-        // add a listener for when the content of the StageWebView changes
-        _stageWebView.addEventListener(LocationChangeEvent.LOCATION_CHANGE,onLocationChange);
-        // start loading the URL;
-
-        var myString:String = (new Banner()).toString();
-
-        _stageWebView.loadString(myString);
-        _stageWebView.stage = stage;
+//        _stageWebView = new StageWebView () ;
+//        var bannerWidth:Number = stage.stageWidth * 468 / Capabilities.screenResolutionX;
+//        var bannerHeight:Number = stage.stageHeight * 60 / Capabilities.screenResolutionY;
+//        bannerViewPort = _stageWebView.viewPort = new Rectangle((stage.stageWidth - bannerWidth) / 2,
+//                stage.stageHeight - bannerHeight, bannerWidth, bannerHeight);
+//        // add a listener for when the content of the StageWebView changes
+//        _stageWebView.addEventListener(LocationChangeEvent.LOCATION_CHANGE,onLocationChange);
+//        // start loading the URL;
+//
+//        var myString:String = (new Banner()).toString();
+//
+//        _stageWebView.loadString(myString);
+//        _stageWebView.stage = stage;
     }
 
     var _stageWebView:StageWebView;

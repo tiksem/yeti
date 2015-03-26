@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_flash_test" default="compile.module.flash_test">
+  <dirname property="module.flash_test.basedir" file="${ant.file.module_flash_test}"/>
+  
+  <property name="module.jdk.home.flash_test" value="${jdk.home.flex_sdk_4.6}"/>
+  <property name="module.jdk.bin.flash_test" value="${jdk.bin.flex_sdk_4.6}"/>
+  <property name="module.jdk.classpath.flash_test" value="jdk.classpath.flex_sdk_4.6"/>
+  
+  <property name="compiler.args.flash_test" value="${compiler.args}"/>
+  
+  <property name="flash_test.output.dir" value="${module.flash_test.basedir}/out/production/flash_test"/>
+  <property name="flash_test.testoutput.dir" value="${module.flash_test.basedir}/out/test/flash_test"/>
+  
+  <path id="flash_test.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="flash_test.module.production.classpath">
+    <path refid="${module.jdk.classpath.flash_test}"/>
+  </path>
+  
+  <path id="flash_test.runtime.production.module.classpath">
+    <pathelement location="${flash_test.output.dir}"/>
+  </path>
+  
+  <path id="flash_test.module.classpath">
+    <path refid="${module.jdk.classpath.flash_test}"/>
+    <pathelement location="${flash_test.output.dir}"/>
+  </path>
+  
+  <path id="flash_test.runtime.module.classpath">
+    <pathelement location="${flash_test.testoutput.dir}"/>
+    <pathelement location="${flash_test.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.flash_test">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.flash_test">
+    <patternset refid="excluded.from.module.flash_test"/>
+  </patternset>
+  
+  <path id="flash_test.module.sourcepath">
+    <dirset dir="${module.flash_test.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.flash_test" depends="compile.module.flash_test.production,compile.module.flash_test.tests" description="Compile module flash_test"/>
+  
+  <target name="compile.module.flash_test.production" depends="register.custom.compilers" description="Compile module flash_test; production classes">
+    <mkdir dir="${flash_test.output.dir}"/>
+    <javac2 destdir="${flash_test.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.flash_test}/javac">
+      <compilerarg line="${compiler.args.flash_test}"/>
+      <bootclasspath refid="flash_test.module.bootclasspath"/>
+      <classpath refid="flash_test.module.production.classpath"/>
+      <src refid="flash_test.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.flash_test"/>
+    </javac2>
+    
+    <copy todir="${flash_test.output.dir}">
+      <fileset dir="${module.flash_test.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.flash_test.tests" depends="register.custom.compilers,compile.module.flash_test.production" description="compile module flash_test; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.flash_test" description="cleanup module">
+    <delete dir="${flash_test.output.dir}"/>
+    <delete dir="${flash_test.testoutput.dir}"/>
+  </target>
+</project>

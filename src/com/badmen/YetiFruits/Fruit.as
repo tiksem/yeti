@@ -5,7 +5,7 @@
  * Time: 21:26
  * To change this template use File | Settings | File Templates.
  */
-package com.weshall.YetiColorado {
+package com.badmen.YetiFruits {
 import com.weshall.flashUtilities.playRandomSound;
 import com.weshall.flashUtilities.setSingleEventListener;
 import com.weshall.utilities.getRandomElementOf;
